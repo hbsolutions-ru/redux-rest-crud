@@ -1,0 +1,45 @@
+{
+  "name": "@hbsolutions/redux-rest-crud",
+  "version": "1.0.0",
+  "description": "Wrapper over the Redux Toolkit that implements CRUD operations via Rest API.",
+  "main": "lib/index.js",
+  "source": "src/index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "build": "microbundle build --jsx React.createElement --jsxFragment React.Fragment --external react,react-dom --format cjs",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hbsolutions-ru/redux-rest-crud.git"
+  },
+  "keywords": [
+    "redux",
+    "rest",
+    "CRUD"
+  ],
+  "author": "HBS Development Team <dev.hbsolutions@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hbsolutions-ru/redux-rest-crud/issues"
+  },
+  "homepage": "https://github.com/hbsolutions-ru/redux-rest-crud#readme",
+  "devDependencies": {
+    "@reduxjs/toolkit": "^1.5.1",
+    "microbundle": "^0.13.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-redux": "^7.2.4",
+    "redux": "^4.1.0"
+  },
+  "peerDependencies": {
+    "@reduxjs/toolkit": "^1.5.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-redux": "^7.2.4",
+    "redux": "^4.1.0"
+  }
+}
