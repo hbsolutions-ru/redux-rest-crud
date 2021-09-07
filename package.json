@@ -1,14 +1,14 @@
 {
   "name": "@hbsolutions/redux-rest-crud",
-  "version": "1.0.0",
-  "description": "Wrapper over the Redux Toolkit that implements CRUD operations via Rest API.",
+  "version": "1.0.1",
+  "description": "Wrapper for Redux Slice with CRUD operations over Rest API.",
   "main": "lib/index.js",
   "source": "src/index.js",
   "directories": {
     "lib": "lib"
   },
   "scripts": {
-    "build": "microbundle build --jsx React.createElement --jsxFragment React.Fragment --external react,react-dom --format cjs",
+    "build": "microbundle build --jsx React.createElement --jsxFragment React.Fragment --external @reduxjs/toolkit,react,react-dom,react-redux,redux --format cjs",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepublishOnly": "npm run build"
   },
