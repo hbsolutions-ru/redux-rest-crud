@@ -1,6 +1,6 @@
 {
   "name": "@hbsolutions/redux-rest-crud",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Wrapper for Redux Slice with CRUD operations over Rest API.",
   "main": "lib/index.js",
   "source": "src/index.js",
@@ -28,18 +28,18 @@
   },
   "homepage": "https://github.com/hbsolutions-ru/redux-rest-crud#readme",
   "devDependencies": {
-    "@reduxjs/toolkit": "^1.5.1",
-    "microbundle": "^0.13.0",
+    "@reduxjs/toolkit": "^1.6.1",
+    "microbundle": "^0.13.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-redux": "^7.2.4",
-    "redux": "^4.1.0"
+    "react-redux": "^7.2.5",
+    "redux": "^4.1.1"
   },
   "peerDependencies": {
-    "@reduxjs/toolkit": "^1.5.1",
+    "@reduxjs/toolkit": "^1.6.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-redux": "^7.2.4",
-    "redux": "^4.1.0"
+    "react-redux": "^7.2.5",
+    "redux": "^4.1.1"
   }
 }

@@ -1,7 +1,8 @@
 import { createSlice as toolkitCreateSlice } from '@reduxjs/toolkit';
 import * as C from './constants';
 
-const createSlice = (name, dependenciesFunction) => {
+const createSlice = (name, insertDirection, dependenciesFunction) => {
+    insertDirection = insertDirection || C.INSERT_DIRECTION_BOTTOM;
     dependenciesFunction = dependenciesFunction || (deps => JSON.stringify(deps));
 
     return toolkitCreateSlice({
@@ -24,7 +25,11 @@ const createSlice = (name, dependenciesFunction) => {
                 state.status = C.STATUS_OK;
             },
             addItem: (state, { payload }) => {
-                state.items.unshift(payload);
+                if (insertDirection === C.INSERT_DIRECTION_TOP) {
+                    state.items.unshift(payload);
+                } else {
+                    state.items.push(payload);
+                }
                 state.status = C.STATUS_OK;
             },
             editItem: (state, { payload }) => {
