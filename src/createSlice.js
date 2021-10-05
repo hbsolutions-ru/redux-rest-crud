@@ -1,48 +1,74 @@
 import { createSlice as toolkitCreateSlice } from '@reduxjs/toolkit';
 import * as C from './constants';
 
-const createSlice = (name, insertDirection, dependenciesFunction) => {
-    insertDirection = insertDirection || C.INSERT_DIRECTION_BOTTOM;
-    dependenciesFunction = dependenciesFunction || (deps => JSON.stringify(deps));
+const createSlice = (name, {
+    fetchFunc,
+    checkAuthFunc = () => true,
+    dependenciesFunc = deps => JSON.stringify(deps),
+}, insertDirection = C.INSERT_DIRECTION_BOTTOM) => {
+
+    const slice = toolkitCreateSlice({
+        name,
+        initialState: {
+            items: [],
+            dependencies: null,
+            status: C.STATUS_INIT,
+        },
+        reducers: {
+            startLoading: state => {
+                state.status = C.STATUS_LOADING;
+            },
+            setError: (state, { payload }) => {
+                state.status = C.ERRORS_STATUSES.indexOf(payload) !== -1 ? payload : C.STATUS_ERROR_UNKNOWN;
+            },
+            setItems: (state, { payload }) => {
+                state.items = payload.data;
+                state.dependencies = dependenciesFunc(payload.deps);
+                state.status = C.STATUS_OK;
+            },
+            addItem: (state, { payload }) => {
+                if (insertDirection === C.INSERT_DIRECTION_TOP) {
+                    state.items.unshift(payload);
+                } else {
+                    state.items.push(payload);
+                }
+                state.status = C.STATUS_OK;
+            },
+            editItem: (state, { payload }) => {
+                const index = state.items.findIndex(item => item.id === payload.id);
+                index > -1 && (state.items[index] = payload);
+            },
+            deleteItem: (state, { payload }) => {
+                const index = state.items.findIndex(item => item.id === payload);
+                index > -1 && state.items.splice(index, 1);
+            },
+        },
+    });
+
+    const loadItems = (deps = {}) => async (dispatch, getState) => {
+        const state = getState();
+
+        if (state[name].status === C.STATUS_LOADING) {
+            return;
+        }
+
+        dispatch(slice.actions.startLoading());
+
+        if (!checkAuthFunc(state)) {
+            dispatch(slice.actions.setError(C.STATUS_ERROR_AUTH));
+            return;
+        }
+
+        try {
+            const data = await fetchFunc(deps);
+            dispatch(slice.actions.setItems({data, deps}));
+        } catch (error) {
+            dispatch(slice.actions.setError(C.STATUS_ERROR_READ));
+        }
+    };
 
     return {
-        slice: toolkitCreateSlice({
-            name,
-            initialState: {
-                items: [],
-                dependencies: null,
-                status: C.STATUS_INIT,
-            },
-            reducers: {
-                startLoading: state => {
-                    state.status = C.STATUS_LOADING;
-                },
-                setError: (state, { payload }) => {
-                    state.status = C.ERRORS_STATUSES.indexOf(payload) !== -1 ? payload : C.STATUS_ERROR_UNKNOWN;
-                },
-                setItems: (state, { payload }) => {
-                    state.items = payload.data;
-                    state.dependencies = dependenciesFunction(payload.deps);
-                    state.status = C.STATUS_OK;
-                },
-                addItem: (state, { payload }) => {
-                    if (insertDirection === C.INSERT_DIRECTION_TOP) {
-                        state.items.unshift(payload);
-                    } else {
-                        state.items.push(payload);
-                    }
-                    state.status = C.STATUS_OK;
-                },
-                editItem: (state, { payload }) => {
-                    const index = state.items.findIndex(item => item.id === payload.id);
-                    index > -1 && (state.items[index] = payload);
-                },
-                deleteItem: (state, { payload }) => {
-                    const index = state.items.findIndex(item => item.id === payload);
-                    index > -1 && state.items.splice(index, 1);
-                },
-            },
-        }),
+        slice: slice,
 
         selectors: {
             getAll: state => state[name].items,
@@ -56,6 +82,10 @@ const createSlice = (name, insertDirection, dependenciesFunction) => {
                 isLoading: state[name].status === C.STATUS_LOADING,
                 isReady: state[name].status === C.STATUS_OK,
             }),
+        },
+
+        thunks: {
+            loadItems,
         },
     };
 };

@@ -20,9 +20,19 @@ import {
 
 export const {
     slice: myEntitySlice,
+
     // extract the selectors you need
-    selectors: { getAll, getById, getStatus }
-} = createSlice('myEntities');
+    selectors: { getAll, getById, getStatus },
+
+    // extract the thunks you need
+    thunks: { loadItems }
+} = createSlice('myEntities', {
+    // pass async function to retrieve data
+    fetchFunc: fetchDataFromTheServer,
+
+    // pass auth checking callback if needed
+    checkAuthFunc: state => state.isAuth,
+});
 
 // extract the necessary actions for use in thunks or elsewhere
 export const { startLoading, setItems, setError, addItem, editItem, deleteItem } = myEntitySlice.actions;
@@ -31,33 +41,35 @@ export const { startLoading, setItems, setError, addItem, editItem, deleteItem }
 export default myEntitySlice.reducer;
 ```
 
-Thunk example:
-```javascript
-export const loadMyEntities = () => {
-    return async (dispatch, getState) => {
-        const state = getState();
+Component example:
+```jsx harmony
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-        if (state.myEntities.status === STATUS_LOADING) {
-            return;
+const MyEntitiesList = () => {
+    const dispatch = useDispatch();
+    
+    const myEntitiesStatus = useSelector(getStatus);
+    const myEntities = useSelector(getAll);
+    
+    useEffect(() => {
+        if (!(
+            myEntitiesStatus.isReady ||
+            myEntitiesStatus.isLoading ||
+            myEntitiesStatus.hasError
+        )) {
+            dispatch(loadItems());
         }
+    }, [dispatch, myEntitiesStatus]);
 
-        dispatch(startLoading());
-
-        // Check auth if needed
-        if (!isAuthSuccess()) {
-            dispatch(setError(STATUS_ERROR_AUTH));
-            return;
-        }
-
-        try {
-            const data = await fetchDataFromTheServer();
-            dispatch(setItems({
-                data,
-                deps: null,
-            }));
-        } catch (error) {
-            dispatch(setError(STATUS_ERROR_READ));
-        }
-    };
+    return (
+        <ul>
+            {myEntities.map((entity, index) => (
+                <li key={index}>{entity.name}</li>
+            ))}
+        </ul>
+    );
 };
+
+export default MyEntitiesList;
 ```
