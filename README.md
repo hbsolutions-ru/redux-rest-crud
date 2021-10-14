@@ -43,24 +43,14 @@ export default myEntitySlice.reducer;
 
 Component example:
 ```jsx harmony
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { withLoader } from '@hbsolutions/redux-rest-crud';
+
+import { myEntitySlice, getAll, loadItems } from './myEntitySlice';
 
 const MyEntitiesList = () => {
-    const dispatch = useDispatch();
-    
-    const myEntitiesStatus = useSelector(getStatus);
     const myEntities = useSelector(getAll);
-    
-    useEffect(() => {
-        if (!(
-            myEntitiesStatus.isReady ||
-            myEntitiesStatus.isLoading ||
-            myEntitiesStatus.hasError
-        )) {
-            dispatch(loadItems());
-        }
-    }, [dispatch, myEntitiesStatus]);
 
     return (
         <ul>
@@ -71,5 +61,9 @@ const MyEntitiesList = () => {
     );
 };
 
-export default MyEntitiesList;
+export default withLoader(
+    MyEntitiesList,
+    myEntitySlice.name,
+    loadItems
+);
 ```
