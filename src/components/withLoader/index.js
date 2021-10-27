@@ -1,31 +1,41 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getStatus } from '../../utils';
+import * as C from '../../constants';
+
+const getStatuses = keys => state => keys.reduce((acc, key) => {
+    acc[key] = {
+        hasError: C.ERRORS_STATUSES.indexOf(state[key].status) !== -1,
+        isLoading: state[key].status === C.STATUS_LOADING,
+        isReady: state[key].status === C.STATUS_OK,
+    };
+    return acc;
+}, {});
 
 const withLoader = (
     Component,
-    sliceName,
-    loadItems,
+    loaders = {},
     renderError = () => 'Error!',
     renderLoading = () => 'Loading...',
 ) => props => {
     const dispatch = useDispatch();
-
-    const status = useSelector(getStatus(sliceName));
+    const keys = Object.keys(loaders);
+    const statuses = useSelector(getStatuses(keys));
 
     useEffect(() => {
-        if (!(
-            status.isReady || status.isLoading || status.hasError
-        )) {
-            dispatch(loadItems());
+        for (const key of keys) {
+            if (!(
+                statuses[key].isReady || statuses[key].isLoading || statuses[key].hasError
+            )) {
+                dispatch(loaders[key]());
+            }
         }
-    }, [dispatch, status]);
+    }, [dispatch, statuses]);
 
-    if (status.hasError) {
+    if (keys.some(key => statuses[key].hasError)) {
         return renderError();
     }
 
-    if (status.isLoading) {
+    if (keys.some(key => statuses[key].isLoading)) {
         return renderLoading();
     }
 

@@ -1,6 +1,5 @@
 import { createSlice as toolkitCreateSlice } from '@reduxjs/toolkit';
 import * as C from './constants';
-import { getStatus } from './utils';
 
 const createSlice = (name, {
     fetchFunc,
@@ -78,7 +77,11 @@ const createSlice = (name, {
                 state[name].items.find(obj => obj.id === id.toString())
             ),
 
-            getStatus: getStatus(name),
+            getStatus: state => ({
+                hasError: C.ERRORS_STATUSES.indexOf(state[name].status) !== -1,
+                isLoading: state[name].status === C.STATUS_LOADING,
+                isReady: state[name].status === C.STATUS_OK,
+            }),
         },
 
         thunks: {
