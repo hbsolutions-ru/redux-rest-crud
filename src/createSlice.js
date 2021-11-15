@@ -73,8 +73,9 @@ const createSlice = (name, {
         selectors: {
             getAll: state => state[name].items,
 
-            getById: id => state => (
-                state[name].items.find(obj => obj.id === id.toString())
+            getById: id => state => (id
+                ? state[name].items.find(obj => obj.id === id.toString())
+                : undefined
             ),
 
             getStatus: state => ({

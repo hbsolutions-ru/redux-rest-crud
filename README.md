@@ -63,7 +63,8 @@ const MyEntitiesList = () => {
 
 export default withLoader(
     MyEntitiesList,
-    myEntitySlice.name,
-    loadItems
+    {
+        [myEntitySlice.name]: loadItems
+    }
 );
 ```
