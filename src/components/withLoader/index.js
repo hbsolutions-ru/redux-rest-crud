@@ -32,7 +32,15 @@ const withLoader = (
     }, [dispatch, statuses]);
 
     if (keys.some(key => statuses[key].hasError)) {
-        return renderError();
+        const tryAgain = e => {
+            e.preventDefault();
+            for (const key of keys) {
+                if (statuses[key].hasError) {
+                    dispatch(loaders[key]());
+                }
+            }
+        };
+        return renderError(tryAgain);
     }
 
     if (keys.some(key => statuses[key].isLoading)) {
