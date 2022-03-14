@@ -14,6 +14,7 @@ const getStatuses = keys => state => keys.reduce((acc, key) => {
 const withLoader = (
     Component,
     loaders = {},
+    deps = {},
     renderError = () => 'Error!',
     renderLoading = () => 'Loading...',
 ) => props => {
@@ -26,7 +27,9 @@ const withLoader = (
             if (!(
                 statuses[key].isReady || statuses[key].isLoading || statuses[key].hasError
             )) {
-                dispatch(loaders[key]());
+                dispatch(loaders[key](
+                    typeof(deps[key]) === 'object' ? deps[key] : {}
+                ));
             }
         }
     }, [dispatch, statuses]);
@@ -36,7 +39,9 @@ const withLoader = (
             e.preventDefault();
             for (const key of keys) {
                 if (statuses[key].hasError) {
-                    dispatch(loaders[key]());
+                    dispatch(loaders[key](
+                        typeof(deps[key]) === 'object' ? deps[key] : {}
+                    ));
                 }
             }
         };
