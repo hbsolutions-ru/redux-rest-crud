@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { dependenciesFunc } from '../../common';
 import * as C from '../../constants';
 
-const getStatuses = keys => state => keys.reduce((acc, key) => {
+const getStatuses = (deps, keys) => state => keys.reduce((acc, key) => {
     acc[key] = {
         hasError: C.ERRORS_STATUSES.indexOf(state[key].status) !== -1,
         isLoading: state[key].status === C.STATUS_LOADING,
-        isReady: state[key].status === C.STATUS_OK,
+        isReady: state[key].status === C.STATUS_OK && state[key].dependencies === dependenciesFunc(deps[key] ?? {}),
     };
     return acc;
 }, {});
@@ -20,7 +21,7 @@ const withLoader = (
 ) => props => {
     const dispatch = useDispatch();
     const keys = Object.keys(loaders);
-    const statuses = useSelector(getStatuses(keys));
+    const statuses = useSelector(getStatuses(deps, keys));
 
     useEffect(() => {
         for (const key of keys) {

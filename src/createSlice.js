@@ -1,10 +1,10 @@
 import { createSlice as toolkitCreateSlice } from '@reduxjs/toolkit';
+import { dependenciesFunc } from './common';
 import * as C from './constants';
 
 const createSlice = (name, {
     fetchFunc,
     checkAuthFunc = () => true,
-    dependenciesFunc = deps => JSON.stringify(deps),
 }, insertDirection = C.INSERT_DIRECTION_BOTTOM) => {
 
     const slice = toolkitCreateSlice({
@@ -78,10 +78,10 @@ const createSlice = (name, {
                 : undefined
             ),
 
-            getStatus: state => ({
+            getStatus: (deps = {}) => state => ({
                 hasError: C.ERRORS_STATUSES.indexOf(state[name].status) !== -1,
                 isLoading: state[name].status === C.STATUS_LOADING,
-                isReady: state[name].status === C.STATUS_OK,
+                isReady: state[name].status === C.STATUS_OK && state[name].dependencies === dependenciesFunc(deps),
             }),
         },
 
