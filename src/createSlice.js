@@ -42,6 +42,11 @@ const createSlice = (name, {
                 const index = state.items.findIndex(item => item.id === payload);
                 index > -1 && state.items.splice(index, 1);
             },
+            reset: state => {
+                state.items = [];
+                state.dependencies = null;
+                state.status = C.STATUS_INIT;
+            },
         },
     });
 

@@ -1,6 +1,6 @@
 {
   "name": "@hbsolutions/redux-rest-crud",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Wrapper for Redux Slice with CRUD operations over Rest API.",
   "main": "lib/index.js",
   "source": "src/index.js",
@@ -41,5 +41,6 @@
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.5",
     "redux": "^4.1.1"
-  }
+  },
+  "dependencies": {}
 }
